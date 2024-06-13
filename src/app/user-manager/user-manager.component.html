@@ -1,0 +1,45 @@
+<div *ngFor="let user of users; let i=index" class="card mb-3">
+  <div class="card-header">
+    <h3>User {{ i + 1 }}</h3>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="userId">User ID:</label>
+        <input type="text" class="form-control" formControlName="userId" [value]="user.userId" id="userId">
+      </div>
+      <div class="form-group">
+        <label for="userName">User Name:</label>
+        <input type="text" class="form-control" formControlName="userName" [value]="user.userName" id="userName">
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" formControlName="email" [value]="user.email" id="email">
+      </div>
+      <div formArrayName="addresses">
+        <h4>Addresses</h4>
+        <div *ngFor="let address of addresses.controls; let j=index" class="form-group">
+          <div [formGroupName]="j" class="row">
+            <div class="col-md-6">
+              <input type="text" class="form-control" formControlName="street" placeholder="Street" (change)="onAddressChange(j)">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" formControlName="city" placeholder="City" (change)="onAddressChange(j)">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control" formControlName="state" placeholder="State" (change)="onAddressChange(j)">
+            </div>
+            <div class="col-md-1">
+              <input type="text" class="form-control" formControlName="zipCode" placeholder="Zip" (change)="onAddressChange(j)">
+            </div>
+            <div class="col-md-1">
+              <button type="button" class="btn btn-danger" (click)="deleteAddressAt(j)">Delete</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mt-2" (click)="addNewAddress()">Add Address</button>
+      </div>
+      <button type="submit" class="btn btn-success mt-3">Submit</button>
+    </form>
+  </div>
+</div>
