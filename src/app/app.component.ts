@@ -1,5 +1,5 @@
-import { compileNgModule } from '@angular/compiler';
 import { Component } from '@angular/core';
+import { UserService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  constructor(private userService : UserService){}
   users = [
     {
       userId: 1,
@@ -18,23 +19,46 @@ export class AppComponent {
     }
   ];
 
-  onAddAddress(address: { street: string, city: string, state: string, zipCode: string }) {
-    // Handle adding an address
-    // console.log('Add address:', address);
-    this.users[0].addresses.push(address);
-    console.log("Users :"+this.users[0]);
-    
+  onAddAddress(event: { userId: number, address: { street: string, city: string, state: string, zipCode: string } }) {
+    const user = this.users.find(u => u.userId === event.userId);
+    if (user) {
+      user.addresses.push(event.address);
+    }
   }
 
-  onDeleteAddress(index: number) {
-    // Handle deleting an address
-    // console.log('Delete address at index:', index);
-    this.users[0].addresses.splice(index, 1);
+  onDeleteAddress(event: { userId: number, index: number }) {
+    const user = this.users.find(u => u.userId === event.userId);
+    if (user) {
+      user.addresses.splice(event.index, 1);
+    }
   }
 
-  onUpdateAddress(event: { index: number, address: { street: string, city: string, state: string, zipCode: string } }) {
-    const { index, address } = event;
-    // Handle updating an address
-    // console.log('Update address at index:', index, 'with', address);
+  onUpdateAddress(event: { userId: number, index: number, address: { street: string, city: string, state: string, zipCode: string } }) {
+    const user = this.users.find(u => u.userId === event.userId);
+    if (user) {
+      user.addresses[event.index] = event.address;
+    }
+  }
+
+  onSaveUser(user: any) {
+    const existingUser = this.users.find(u => u.userId === user.userId);
+    if (existingUser) {
+      existingUser.userName = user.userName;
+      existingUser.email = user.email;
+      existingUser.addresses = user.addresses;
+      
+    } else {
+      this.users.push(user);
+      this.userService.createUser(user).subscribe(
+        response => {
+          console.log('User saved successfully!', response);
+          window.location.reload(); // Consider using more Angular-friendly ways to refresh the data.
+        },
+        error => {
+          console.error('Error saving user!', error);
+        }
+      );
+      console.log("Data Submitted Successfully")
+    }
   }
 }

@@ -1,21 +1,28 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IUser } from 'backend/models/user.model';
-
+import { User } from 'backend/src/models/user.model';
 @Injectable({
   providedIn: 'root'
 })
-export class DataService {
+export class UserService {
   private apiUrl = 'http://localhost:5000/api/users';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  addUser(data: IUser): Observable<IUser> {
-    return this.http.post<IUser>(this.apiUrl, data);
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user);
   }
 
-  getUsers(): Observable<IUser[]> {
-    return this.http.get<IUser[]>(this.apiUrl);
+  getUserById(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users/${userId}`);
+  }
+
+  updateUser(userId: number, user: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}`, user);
+  }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${userId}`);
   }
 }
